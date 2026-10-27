@@ -1,79 +1,143 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>অটো ম্যানেজ - ১০ অটো</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>১০ অটো - ফুল ম্যানেজার</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:sans-serif;background:#0f1a12;color:#fff;padding-bottom:80px}
-.header{background:#1a3320;padding:18px 16px;display:flex;justify-content:space-between}
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:16px}
-.card{border-radius:16px;padding:14px;text-align:center}
-.c1,.c3{background:#2a5a36} .c2{background:#6b3d1f}
-.card h2{margin-top:6px}
-.auto-item{background:#1e2a22;margin:0 12px 10px 12px;border-radius:14px;padding:14px;display:flex;justify-content:space-between}
-.badge{background:#7ed957;color:#000;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:bold}
-.money{color:#7ed957;text-align:right;font-size:13px}
-input,select,button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none}
-button{background:#7ed957;color:#000;font-weight:bold;font-size:16px}
-.form-box{background:#1e2a22;margin:16px;border-radius:16px;padding:16px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#1a3320;display:flex;justify-content:space-around;padding:10px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f1410;color:#fff;padding-bottom:80px}
+.header{background:#1a3320;padding:16px;text-align:center;position:sticky;top:0;z-index:10}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px}
+.card{background:#2a5a36;border-radius:12px;padding:10px;text-align:center}
+.card:nth-child(2){background:#6b3d1f}
+.btn-pdf{width:92%;margin:10px 4%;background:#fff;color:#000;padding:12px;border-radius:12px;font-weight:bold;border:none}
+.auto{background:#1e2a22;margin:10px 12px;border-radius:16px;overflow:hidden;border:1px solid #2f4a35}
+.head{padding:12px;display:flex;gap:12px;align-items:center}
+.head img{width:56px;height:56px;border-radius:50%;object-fit:cover;background:#333}
+.body{display:none;padding:12px;background:#243326}
+.auto.open .body{display:block}
+input,textarea{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none;background:#111;color:#fff}
+.row{display:flex;gap:8px}
+.btn{padding:10px;border-radius:8px;border:none;font-weight:bold;flex:1}
+.btn-g{background:#7ed957;color:#000}
+.btn-wa{background:#25D366;color:#fff}
+.btn-sms{background:#007bff;color:#fff}
+.btn-dark{background:#333;color:#fff}
+.badge{background:#7ed957;color:#000;padding:2px 8px;border-radius:20px;font-size:11px}
+table{width:100%;font-size:12px;margin-top:8px;border-collapse:collapse}
+th,td{padding:6px;border-bottom:1px solid #333;text-align:left}
+.upload{font-size:11px}
 </style>
 </head>
 <body>
-<div class="header"><h1>🛺 অটো ম্যানেজ</h1><span>👤</span></div>
-
+<div class="header"><h2>🛺 ১০ অটো ফুল ম্যানেজার</h2><small>ছবি • নম্বর • ঠিকানা • ডেট বাই ডেট • PDF</small></div>
 <div class="stats">
-<div class="card c1"><p>আজকের আয়</p><h2 id="tIncome">৳ ০</h2><small id="tCount">১০টি</small></div>
-<div class="card c2"><p>খরচ</p><h2 id="tExpense">৳ ০</h2><small>তেল+মেরামত</small></div>
-<div class="card c3"><p>লাভ</p><h2 id="tProfit">৳ ০</h2></div>
+<div class="card"><small>মাসের আয়</small><h2 id="mInc">৳0</h2></div>
+<div class="card"><small>খরচ</small><h2 id="mExp">৳0</h2></div>
+<div class="card"><small>লাভ</small><h2 id="mPro">৳0</h2></div>
 </div>
-
-<h3 style="padding:10px 16px">অটোসমূহ (১০টি)</h3>
-<div id="autoList"></div>
-
-<div class="form-box">
-<h3>নতুন জমা যোগ করুন</h3>
-<select id="autoSelect"></select>
-<input type="number" id="income" placeholder="আয় - যেমন 1200">
-<input type="number" id="expense" placeholder="খরচ - যেমন 200">
-<input type="text" id="note" placeholder="নোট - তেল / মেরামত">
-<button onclick="addEntry()">জমা সেভ করুন</button>
-</div>
-
-<div class="nav"><div>🏠 ড্যাশবোর্ড</div><div>🛺 অটো</div><div>💰 আয়-ব্যয়</div><div>👤 প্রোফাইল</div></div>
+<button class="btn-pdf" onclick="downloadPDF()">📄 মাসিক হিসাব PDF ডাউনলোড</button>
+<div id="list"></div>
 
 <script>
 let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
-let drivers=["রাকিব হোসেন","মো. আলম","সজিব মিয়া","নাসির উদ্দিন","করিম শেখ","সুমন আহমেদ","রিপন ভূঁইয়া","আনোয়ার হাসেন","জামাল হোসেন","রফিকুল ইসলাম"];
-let data=JSON.parse(localStorage.getItem('autoData')||'{}');
-let today=new Date().toISOString().slice(0,10);
+let drivers=JSON.parse(localStorage.getItem('driversV2')||'null')||autos.map((a,i)=>({name:["রাকিব","আলম","সজিব","নাসির","করিম","সুমন","রিপন","আনোয়ার","জামাল","রফিক"][i],phone:"",address:"",photo:""}));
+let tx=JSON.parse(localStorage.getItem('txV2')||'{}'); // tx[auto]=[{date,income,expense}]
+function save(){localStorage.setItem('driversV2',JSON.stringify(drivers));localStorage.setItem('txV2',JSON.stringify(tx));}
+
 function render(){
-let list=document.getElementById('autoList');list.innerHTML='';
-let sel=document.getElementById('autoSelect');sel.innerHTML='';
-let tI=0,tE=0;
-autos.forEach((a,i)=>{
-sel.innerHTML+=`<option value="${a}">${a} - ${drivers[i]}</option>`;
-let d=data[today]?.[a]||{income:0,expense:0,note:''};
-tI+=d.income;tE+=d.expense;
-list.innerHTML+=`<div class="auto-item"><div><span class="badge">${a}</span> <b>${drivers[i]}</b><br><small>${d.income>0?'✅ জমা দিয়েছে':'⏳ বাকি'} - ${d.note||'মিরপুর'}</small></div><div class="money">আয় ৳${d.income}<br>লাভ ৳${d.income-d.expense}</div></div>`;
+let html=''; let mI=0,mE=0; let month=new Date().toISOString().slice(0,7);
+autos.forEach((auto,i)=>{
+let d=drivers[i];
+let list=tx[auto]||[];
+let monthList=list.filter(x=>x.date.startsWith(month));
+let totalI=monthList.reduce((s,x)=>s+x.income,0);
+let totalE=monthList.reduce((s,x)=>s+x.expense,0);
+mI+=totalI; mE+=totalE;
+let last=list[list.length-1];
+html+=`<div class="auto" id="a${i}">
+<div class="head" onclick="toggle(${i})">
+<img src="${d.photo||'https://via.placeholder.com/100?text=No+Photo'}" id="img${i}">
+<div style="flex:1"><span class="badge">${auto}</span> <b>${d.name}</b><br><small>📱 ${d.phone||'নম্বর নাই'} | 📍 ${d.address||'ঠিকানা নাই'}<br>📅 আজ: ${last? last.income+'৳':'বাকি'} | মাস: ${totalI}৳</small></div><div>▼</div>
+</div>
+<div class="body">
+<div class="row">
+<div style="flex:1">
+<input type="text" id="n${i}" value="${d.name}" placeholder="ড্রাইভার নাম">
+<input type="text" id="p${i}" value="${d.phone}" placeholder="মোবাইল 8801...">
+<input type="text" id="ad${i}" value="${d.address}" placeholder="ঠিকানা">
+<input type="file" class="upload" accept="image/*" onchange="setPhoto(${i},this)">
+</div>
+</div>
+<button class="btn btn-dark" style="width:100%;margin:5px 0" onclick="saveDriver(${i})">💾 ড্রাইভার তথ্য সেভ</button>
+<hr style="opacity:.2;margin:10px 0">
+<input type="date" id="d${i}" value="${new Date().toISOString().slice(0,10)}">
+<div class="row"><input type="number" id="inc${i}" placeholder="আয়"><input type="number" id="ex${i}" placeholder="খরচ"></div>
+<button class="btn btn-g" style="width:100%" onclick="addTx(${i})">➕ আয় যোগ করুন</button>
+
+<table id="tbl${i}"><tr><th>তারিখ</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>
+${list.slice(-10).reverse().map(r=>`<tr><td>${r.date}</td><td>${r.income}</td><td>${r.expense}</td><td>${r.income-r.expense}</td></tr>`).join('')}
+</table>
+
+<hr style="opacity:.2;margin:10px 0">
+<textarea id="msg${i}" rows="2" placeholder="নোটিশ লিখুন..."></textarea>
+<div class="row">
+<button class="btn btn-wa" onclick="sendWA(${i})">WhatsApp</button>
+<button class="btn btn-sms" onclick="sendSMS(${i})">SMS</button>
+</div>
+</div></div>`;
 });
-document.getElementById('tIncome').innerText='৳ '+tI;
-document.getElementById('tExpense').innerText='৳ '+tE;
-document.getElementById('tProfit').innerText='৳ '+(tI-tE);
+document.getElementById('list').innerHTML=html;
+document.getElementById('mInc').innerText='৳'+mI;
+document.getElementById('mExp').innerText='৳'+mE;
+document.getElementById('mPro').innerText='৳'+(mI-mE);
 }
-function addEntry(){
-let a=document.getElementById('autoSelect').value;
-let inc=parseInt(document.getElementById('income').value||0);
-let exp=parseInt(document.getElementById('expense').value||0);
-let note=document.getElementById('note').value;
-if(!data[today]) data[today]={};
-data[today][a]={income:inc,expense:exp,note:note};
-localStorage.setItem('autoData',JSON.stringify(data));
-render();
-document.getElementById('income').value='';document.getElementById('expense').value='';document.getElementById('note').value='';
-alert(a+' সেভ হয়েছে!');
+function toggle(i){document.getElementById('a'+i).classList.toggle('open');}
+function saveDriver(i){
+drivers[i].name=document.getElementById('n'+i).value;
+drivers[i].phone=document.getElementById('p'+i).value;
+drivers[i].address=document.getElementById('ad'+i).value;
+save(); render(); document.getElementById('a'+i).classList.add('open');
+alert('ড্রাইভার সেভ হয়েছে');
+}
+function setPhoto(i,input){
+let reader=new FileReader();
+reader.onload=e=>{drivers[i].photo=e.target.result; save(); document.getElementById('img'+i).src=e.target.result;}
+reader.readAsDataURL(input.files[0]);
+}
+function addTx(i){
+let date=document.getElementById('d'+i).value;
+let income=parseInt(document.getElementById('inc'+i).value||0);
+let expense=parseInt(document.getElementById('ex'+i).value||0);
+if(!tx[autos[i]]) tx[autos[i]]=[];
+tx[autos[i]].push({date,income,expense,driver:drivers[i].name});
+save(); render(); document.getElementById('a'+i).classList.add('open');
+}
+function sendWA(i){
+let phone=drivers[i].phone.replace(/[^0-9]/g,'');
+if(!phone){alert('নম্বর নাই');return;}
+let msg=encodeURIComponent(document.getElementById('msg'+i).value||`আসসালামু আলাইকুম ${drivers[i].name} ভাই, ${autos[i]} এর হিসাব জানাবেন।`);
+window.open(`https://wa.me/${phone}?text=${msg}`,'_blank');
+}
+function sendSMS(i){
+let phone=drivers[i].phone;
+if(!phone){alert('নম্বর নাই');return;}
+let msg=encodeURIComponent(document.getElementById('msg'+i).value||`আসসালামু আলাইকুম ${drivers[i].name} ভাই`);
+window.location.href=`sms:${phone}?body=${msg}`;
+}
+function downloadPDF(){
+const {jsPDF}=window.jspdf; let doc=new jsPDF();
+doc.text("10 Auto Monthly Report - "+new Date().toLocaleDateString(),10,10);
+let y=20;
+autos.forEach(auto=>{
+let list=tx[auto]||[]; let month=new Date().toISOString().slice(0,7);
+let ml=list.filter(x=>x.date.startsWith(month));
+if(ml.length==0) return;
+let ti=ml.reduce((s,x)=>s+x.income,0); let te=ml.reduce((s,x)=>s+x.expense,0);
+doc.text(`${auto} - ${drivers[autos.indexOf(auto)].name}: Income ${ti} Expense ${te} Profit ${ti-te}`,10,y); y+=8;
+if(y>280){doc.addPage(); y=10;}
+});
+doc.save(`auto-report-${new Date().toISOString().slice(0,7)}.pdf`);
 }
 render();
 </script>
