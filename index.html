@@ -2,53 +2,63 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Takrim Auto - Fixed</title>
+<title>Takrim Compact</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;background:#0f1410;color:#fff;padding:10px}
-.header-banner{background:#fff;border-radius:14px;padding:8px;margin-bottom:12px;text-align:center;border:2px solid #0a5c36}
-.header-banner img{width:100%;max-width:800px;height:auto;display:block;margin:0 auto}
-.box{background:#1e2a22;border-radius:14px;padding:12px;margin-bottom:10px;border:1px solid #2e4a35}
-.btn{padding:10px;border-radius:9px;border:0;font-weight:bold;flex:1} .row{display:flex;gap:6px;margin-top:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:sans-serif;background:#0f1410;color:#fff;padding:6px;font-size:13px}
+.header-banner{background:#fff;border-radius:10px;padding:4px;margin-bottom:6px;text-align:center;border:1.5px solid #0a5c36}
+.header-banner img{width:100%;height:48px;object-fit:contain;display:block;margin:0 auto}
+.top-row{display:flex;gap:6px;margin-bottom:6px}
+.box{flex:1;background:#1e2a22;border-radius:10px;padding:7px;border:1px solid #2e4a35}
+.box b{font-size:11px;display:block} .box small{font-size:9px;opacity:.7}
+.box input{padding:5px;font-size:11px;margin:4px 0;border-radius:6px;border:0;background:#fff;color:#000;width:100%}
+.btn{padding:5px;border-radius:6px;border:0;font-weight:bold;font-size:11px;flex:1}
+.row{display:flex;gap:4px;margin-top:4px}
 .btn-dark{background:#3a3a3a;color:#fff}.btn-green{background:#7ed957;color:#000}
-.auto{background:#1e2a22;border-radius:14px;margin:8px 0;padding:0;overflow:hidden;border:1px solid #2a4a32}
-.head{padding:12px;display:flex;gap:10px;align-items:center} .head img{width:52px;height:52px;border-radius:50%;background:#333;object-fit:cover}
-.body{display:none;padding:12px;background:#233326} .auto.open .body{display:block}
-input,textarea{width:100%;padding:9px;margin:4px 0;border-radius:8px;border:0;background:#111;color:#fff}
-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}th,td{border-bottom:1px solid #333;padding:6px;text-align:left}
-.preview{background:#fff;color:#000;border-radius:12px;padding:12px;display:none;margin:10px 0}
-#pdfCapture{background:#fff;color:#000;padding:12px;width:800px}
-#pdfCapture th{background:#0a5c36;color:#fff;padding:8px} #pdfCapture td{padding:7px;border-bottom:1px solid #ccc}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.auto{background:#1e2a22;border-radius:10px;padding:0;overflow:hidden;border:1px solid #2a4a32}
+.head{padding:6px 8px;display:flex;gap:6px;align-items:center}
+.head img{width:28px;height:28px;border-radius:50%;background:#333;object-fit:cover;flex-shrink:0}
+.head b{font-size:11px;line-height:1.1} .head small{font-size:9px;opacity:.8}
+.body{display:none;padding:8px;background:#233326} .auto.open .body{display:block}
+.body input,.body textarea{width:100%;padding:6px;margin:3px 0;border-radius:6px;border:0;background:#111;color:#fff;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px}th,td{border-bottom:1px solid #333;padding:3px;text-align:left}
+.preview{background:#fff;color:#000;border-radius:10px;padding:10px;display:none;margin:6px 0;position:fixed;top:5%;left:5%;right:5%;max-height:90%;overflow:auto;z-index:99;box-shadow:0 0 20px #000}
+#pdfCapture{background:#fff;color:#000;padding:10px;width:800px}
+#pdfCapture th{background:#0a5c36;color:#fff;padding:6px} #pdfCapture td{padding:5px;border-bottom:1px solid #ccc}
+h3{font-size:13px;padding:4px 0;text-align:center}
 </style>
 </head>
 <body>
-<div class="header-banner"><img id="companyHeader" src="IMG-20261027-WA0084(2).jpg"></div>
-<h3 style="text-align:center;padding:10px">🛺 10 অটো - তাকরিম অটো লিমিটেড</h3>
-<div class="box" style="background:#1a3320"><b>PDF-১: গন্ডগোলের PDF</b><input type="date" id="oneDate" value="2026-10-05" style="background:#fff;color:#000;margin-top:8px"><div class="row"><button class="btn btn-dark" onclick="previewOne()">👁️ দেখো</button><button class="btn btn-green" onclick="downloadOne()">⬇️ PDF</button></div></div>
-<div class="box" style="background:#122a1a"><b>PDF-২: মাসিক PDF (১-৩১)</b><input type="month" id="monthDate" value="2026-10" style="background:#fff;color:#000;margin-top:8px"><div class="row"><button class="btn btn-dark" onclick="previewMonth()">👁️ ১-৩১ দেখো</button><button class="btn btn-green" onclick="downloadMonth()">⬇️ ১-৩১ PDF</button></div></div>
-<div id="preview" class="preview"><div style="display:flex;justify-content:space-between"><b id="pTitle"></b><button onclick="document.getElementById('preview').style.display='none'">X</button></div><div id="pContent"></div><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="downloadCurrent()">📄 PDF ডাউনলোড</button></div>
-<div id="list"></div>
+<div class="header-banner"><img src="IMG-20261027-WA0084(2).jpg"></div>
+<h3>🛺 10 অটো - তাকরিম</h3>
+<div class="top-row">
+<div class="box"><b>PDF-১: গন্ডগোল</b><input type="date" id="oneDate" value="2026-10-05"><div class="row"><button class="btn btn-dark" onclick="previewOne()">👁️</button><button class="btn btn-green" onclick="downloadOne()">⬇️ PDF</button></div></div>
+<div class="box"><b>PDF-২: মাসিক ১-৩১</b><input type="month" id="monthDate" value="2026-10"><div class="row"><button class="btn btn-dark" onclick="previewMonth()">👁️ ১-৩১</button><button class="btn btn-green" onclick="downloadMonth()">⬇️ PDF</button></div></div>
+</div>
+<div id="preview" class="preview"><div style="display:flex;justify-content:space-between"><b id="pTitle"></b><button onclick="document.getElementById('preview').style.display='none'" style="padding:3px 8px">X</button></div><div id="pContent"></div><button class="btn btn-green" style="width:100%;margin-top:6px" onclick="downloadCurrent()">📄 ডাউনলোড</button></div>
+<div class="grid" id="list"></div>
 <div style="position:absolute;left:-9999px;top:0"><div id="pdfCapture"></div></div>
 <script>
 let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
 let names=["রাকিব","আলম","সজিব","নাসির","করিম","সুমন","রিপন","আনোয়ার","জামাল","রফিক"];
 let drivers=JSON.parse(localStorage.getItem('dFinal')||'null')||autos.map((a,i)=>({name:names[i],phone:"",address:"",photo:""}));
-let tx=JSON.parse(localStorage.getItem('tFinal')||'{}');let lastType='';let lastHtmlForPdf='';
+let tx=JSON.parse(localStorage.getItem('tFinal')||'{}');let lastType='';
 function save(){localStorage.setItem('dFinal',JSON.stringify(drivers));localStorage.setItem('tFinal',JSON.stringify(tx));}
-function render(){let h='';autos.forEach((auto,i)=>{let d=drivers[i];let list=tx[auto]||[];h+=`<div class="auto" id="a${i}"><div class="head" onclick="document.getElementById('a${i}').classList.toggle('open')"><img src="${d.photo||'https://via.placeholder.com/100?text=No'}"><div style="flex:1"><b>${auto} - ${d.name}</b><br><small>📱${d.phone||'নাই'} | মোট: ${list.length}</small></div>▼</div><div class="body"><b>ড্রাইভার</b><input id="n${i}" value="${d.name}"><input id="p${i}" value="${d.phone}"><input id="ad${i}" value="${d.address}"><input type="file" accept="image/*" onchange="photo(${i},this)"><button class="btn btn-dark" style="width:100%" onclick="saveD(${i})">💾 সেভ</button><hr style="opacity:.2;margin:10px 0"><b>টাকা</b><input type="date" id="dt${i}" value="${document.getElementById('oneDate').value}"><div class="row"><input type="number" id="in${i}" placeholder="আয়"><input type="number" id="ex${i}" placeholder="খরচ"></div><button class="btn btn-green" style="width:100%" onclick="addT(${i})">➕ সেভ</button><table><tr><th>তারিখ</th><th>আয়</th><th>খরচ</th><th>এডিট</th></tr>${list.slice(-8).reverse().map(r=>`<tr><td>${r.date}</td><td>${r.income}</td><td>${r.expense}</td><td><button onclick="editT(${i},'${r.date}')">✏️</button></td></tr>`).join('')}</table></div></div>`;});document.getElementById('list').innerHTML=h;}
-function saveD(i){drivers[i].name=document.getElementById('n'+i).value;drivers[i].phone=document.getElementById('p'+i).value;drivers[i].address=document.getElementById('ad'+i).value;save();render();}
+function render(){let h='';autos.forEach((auto,i)=>{let d=drivers[i];let list=tx[auto]||[];h+=`<div class="auto" id="a${i}"><div class="head" onclick="document.getElementById('a${i}').classList.toggle('open')"><img src="${d.photo||'https://via.placeholder.com/100?text=No'}"><div style="flex:1"><b>${auto} ${d.name}</b><br><small>📱${d.phone||'নাই'} | ${list.length}</small></div>▼</div><div class="body"><input id="n${i}" value="${d.name}" placeholder="নাম"><input id="p${i}" value="${d.phone}" placeholder="ফোন"><input type="file" accept="image/*" onchange="photo(${i},this)"><button class="btn btn-dark" style="width:100%" onclick="saveD(${i})">💾</button><input type="date" id="dt${i}" value="${document.getElementById('oneDate').value}"><div class="row"><input type="number" id="in${i}" placeholder="আয়"><input type="number" id="ex${i}" placeholder="খরচ"></div><button class="btn btn-green" style="width:100%" onclick="addT(${i})">➕</button><table><tr><th>তারিখ</th><th>আয়</th><th>খ</th></tr>${list.slice(-4).reverse().map(r=>`<tr><td>${r.date.slice(5)}</td><td>${r.income}</td><td>${r.expense}</td></tr>`).join('')}</table></div></div>`;});document.getElementById('list').innerHTML=h;}
+function saveD(i){drivers[i].name=document.getElementById('n'+i).value;drivers[i].phone=document.getElementById('p'+i).value;save();render();}
 function photo(i,inp){let r=new FileReader();r.onload=e=>{drivers[i].photo=e.target.result;save();render();};r.readAsDataURL(inp.files[0]);}
 function addT(i){let d=document.getElementById('dt'+i).value;let inc=parseInt(document.getElementById('in'+i).value||0);let ex=parseInt(document.getElementById('ex'+i).value||0);if(!tx[autos[i]])tx[autos[i]]=[];let idx=tx[autos[i]].findIndex(x=>x.date===d);if(idx>=0)tx[autos[i]][idx]={date:d,income:inc,expense:ex};else tx[autos[i]].push({date:d,income:inc,expense:ex});tx[autos[i]].sort((a,b)=>a.date.localeCompare(b.date));save();render();}
-function editT(i,date){let it=(tx[autos[i]]||[]).find(x=>x.date===date);document.getElementById('dt'+i).value=it.date;document.getElementById('in'+i).value=it.income;document.getElementById('ex'+i).value=it.expense;}
-function makeTableForDate(date){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:700px"><h2 style="margin:10px 0">গন্ডগোলের রিপোর্ট - ${date}</h2></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let ti=0,te=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date===date);let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);ti+=a;te+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><br><div style="background:#0a5c36;color:#fff;padding:10px;text-align:center"><b>মোট আয় ${ti} | খরচ ${te} | লাভ ${ti-te}</b></div>`;return html;}
-function makeTableForMonth(month){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:700px"><h2 style="margin:10px 0">মাসিক রিপোর্ট ১-৩১ - ${month}</h2></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>মাস আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let gI=0,gE=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date.startsWith(month));let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);gI+=a;gE+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><br><div style="background:#0a5c36;color:#fff;padding:10px;text-align:center"><b>১-৩১ মোট আয় ${gI} | খরচ ${gE} | লাভ ${gI-gE}</b></div>`;return html;}
-function previewOne(){let d=document.getElementById('oneDate').value;let html=makeTableForDate(d);document.getElementById('pTitle').innerText=d+' - গন্ডগোল';document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='one';lastHtmlForPdf=html;}
-function previewMonth(){let m=document.getElementById('monthDate').value;let html=makeTableForMonth(m);document.getElementById('pTitle').innerText=m+' - মাসিক';document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='month';lastHtmlForPdf=html;}
+function makeTableForDate(date){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:600px"><h3>গন্ডগোল - ${date}</h3></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let ti=0,te=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date===date);let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);ti+=a;te+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><div style="background:#0a5c36;color:#fff;padding:8px;text-align:center"><b>আয় ${ti} | খরচ ${te} | লাভ ${ti-te}</b></div>`;return html;}
+function makeTableForMonth(month){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:600px"><h3>মাসিক ১-৩১ - ${month}</h3></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let gI=0,gE=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date.startsWith(month));let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);gI+=a;gE+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><div style="background:#0a5c36;color:#fff;padding:8px;text-align:center"><b>আয় ${gI} | খরচ ${gE} | লাভ ${gI-gE}</b></div>`;return html;}
+function previewOne(){let d=document.getElementById('oneDate').value;let html=makeTableForDate(d);document.getElementById('pTitle').innerText=d;document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='one';}
+function previewMonth(){let m=document.getElementById('monthDate').value;let html=makeTableForMonth(m);document.getElementById('pTitle').innerText=m;document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='month';}
 function downloadCurrent(){if(lastType==='one')downloadOne();else downloadMonth();}
-async function generatePdfFromHtml(htmlContent,fileName){let cap=document.getElementById('pdfCapture');cap.innerHTML=htmlContent;await new Promise(r=>setTimeout(r,500));let canvas=await html2canvas(cap,{scale:2,useCORS:true,backgroundColor:'#ffffff'});let imgData=canvas.toDataURL('image/png');let {jsPDF}=window.jspdf;let doc=new jsPDF('p','mm','a4');let imgWidth=190;let imgHeight=canvas.height*imgWidth/canvas.width;let heightLeft=imgHeight;let pos=10;doc.addImage(imgData,'PNG',10,pos,imgWidth,imgHeight);heightLeft-=297;while(heightLeft>=0){pos=heightLeft-imgHeight+10;doc.addPage();doc.addImage(imgData,'PNG',10,pos,imgWidth,imgHeight);heightLeft-=297;}doc.save(fileName);}
-async function downloadOne(){let date=document.getElementById('oneDate').value;let html=makeTableForDate(date);await generatePdfFromHtml(html,`takrim-gondogol-${date}.pdf`);}
-async function downloadMonth(){let month=document.getElementById('monthDate').value;let html=makeTableForMonth(month);await generatePdfFromHtml(html,`takrim-monthly-1-31-${month}.pdf`);}
+async function generatePdfFromHtml(htmlContent,fileName){let cap=document.getElementById('pdfCapture');cap.innerHTML=htmlContent;await new Promise(r=>setTimeout(r,400));let canvas=await html2canvas(cap,{scale:2,useCORS:true,backgroundColor:'#fff'});let imgData=canvas.toDataURL('image/png');let {jsPDF}=window.jspdf;let doc=new jsPDF('p','mm','a4');let w=190;let h=canvas.height*w/canvas.width;let left=h;let pos=10;doc.addImage(imgData,'PNG',10,pos,w,h);left-=297;while(left>=0){pos=left-h+10;doc.addPage();doc.addImage(imgData,'PNG',10,pos,w,h);left-=297;}doc.save(fileName);}
+async function downloadOne(){let date=document.getElementById('oneDate').value;let html=makeTableForDate(date);await generatePdfFromHtml(html,`takrim-${date}.pdf`);}
+async function downloadMonth(){let month=document.getElementById('monthDate').value;let html=makeTableForMonth(month);await generatePdfFromHtml(html,`takrim-monthly-${month}.pdf`);}
 render();
 </script>
 </body>
