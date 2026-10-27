@@ -7,28 +7,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:sans-serif;background:#0f1410;color:#fff;padding:6px;font-size:13px}
-.header-banner{background:#fff;border-radius:10px;padding:0;margin-bottom:6px;text-align:center;border:1.5px solid #0a5c36;overflow:hidden}
+body{font-family:sans-serif;background:#0f1410;color:#fff;padding:5px;font-size:13px}
+.header-banner{background:#fff;border-radius:8px;padding:0;margin-bottom:4px;text-align:center;border:1px solid #0a5c36;overflow:hidden}
 .header-banner img{width:100%;height:auto;display:block}
-.top-row{display:flex;gap:6px;margin-bottom:6px}
-.box{flex:1;background:#1e2a22;border-radius:10px;padding:7px;border:1px solid #2e4a35}
-.box b{font-size:11px;display:block} .box input{padding:5px;font-size:11px;margin:4px 0;border-radius:6px;border:0;background:#fff;color:#000;width:100%}
-.btn{padding:5px;border-radius:6px;border:0;font-weight:bold;font-size:11px;flex:1}
-.row{display:flex;gap:4px;margin-top:4px}
+.top-row{display:flex;gap:4px;margin-bottom:4px}
+.box{flex:1;background:#1e2a22;border-radius:8px;padding:6px;border:1px solid #2e4a35}
+.box b{font-size:10px;display:block} .box input{padding:4px;font-size:10px;margin:3px 0;border-radius:5px;border:0;background:#fff;color:#000;width:100%}
+.btn{padding:4px;border-radius:5px;border:0;font-weight:bold;font-size:10px;flex:1}
+.row{display:flex;gap:3px;margin-top:3px}
 .btn-dark{background:#3a3a3a;color:#fff}.btn-green{background:#7ed957;color:#000}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.auto{background:#1e2a22;border-radius:10px;padding:0;overflow:hidden;border:1px solid #2a4a32}
-.head{padding:6px 8px;display:flex;gap:6px;align-items:center}
-.head img{width:28px;height:28px;border-radius:50%;background:#333;object-fit:cover;flex-shrink:0}
-.head b{font-size:11px;line-height:1.1} .head small{font-size:9px;opacity:.8}
-.body{display:none;padding:8px;background:#233326} .auto.open .body{display:block}
-.body input{width:100%;padding:6px;margin:3px 0;border-radius:6px;border:0;background:#111;color:#fff;font-size:11px}
-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px}th,td{border-bottom:1px solid #333;padding:3px;text-align:left}
-.preview{background:#fff;color:#000;border-radius:10px;padding:10px;display:none;margin:6px 0;position:fixed;top:5%;left:5%;right:5%;max-height:90%;overflow:auto;z-index:99;box-shadow:0 0 20px #000}
-#pdfCapture{background:#fff;color:#000;padding:10px;width:800px}
-#pdfCapture th{background:#0a5c36;color:#fff;padding:6px} #pdfCapture td{padding:5px;border-bottom:1px solid #ccc}
-.title-bar{text-align:center;background:#1a3320;border-radius:8px;padding:8px;margin-bottom:6px;border:1px solid #0a5c36}
-.title-bar h3{font-size:15px;color:#7ed957}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.auto{background:#1e2a22;border-radius:8px;padding:0;overflow:hidden;border:1px solid #2a4a32}
+.head{padding:5px 6px;display:flex;gap:5px;align-items:center}
+.head img{width:24px;height:24px;border-radius:50%;background:#333;object-fit:cover;flex-shrink:0}
+.head b{font-size:10px;line-height:1.1} .head small{font-size:8px;opacity:.8}
+.body{display:none;padding:6px;background:#233326} .auto.open .body{display:block}
+.body input{width:100%;padding:5px;margin:2px 0;border-radius:5px;border:0;background:#111;color:#fff;font-size:10px}
+table{width:100%;border-collapse:collapse;font-size:10px;margin-top:4px}th,td{border-bottom:1px solid #333;padding:2px;text-align:left}
+.preview{background:#fff;color:#000;border-radius:8px;padding:8px;display:none;margin:4px 0;position:fixed;top:5%;left:5%;right:5%;max-height:90%;overflow:auto;z-index:99;box-shadow:0 0 20px #000}
+#pdfCapture{background:#fff;color:#000;padding:8px;width:800px}
+#pdfCapture th{background:#0a5c36;color:#fff;padding:5px} #pdfCapture td{padding:4px;border-bottom:1px solid #ccc}
+.title-bar{text-align:center;background:#1a3320;border-radius:6px;padding:5px;margin-bottom:4px;border:1px solid #0a5c36}
+.title-bar h3{font-size:13px;color:#7ed957}
 </style>
 </head>
 <body>
@@ -38,18 +38,17 @@ table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px}th,td{bo
 <div class="box"><b>PDF-১: দৈনিক হিসাব</b><input type="date" id="oneDate" value="2026-10-05"><div class="row"><button class="btn btn-dark" onclick="previewOne()">👁️</button><button class="btn btn-green" onclick="downloadOne()">⬇️ PDF</button></div></div>
 <div class="box"><b>PDF-২: মাসিক ১-৩১</b><input type="month" id="monthDate" value="2026-10"><div class="row"><button class="btn btn-dark" onclick="previewMonth()">👁️ ১-৩১</button><button class="btn btn-green" onclick="downloadMonth()">⬇️ PDF</button></div></div>
 </div>
-<div id="preview" class="preview"><div style="display:flex;justify-content:space-between"><b id="pTitle"></b><button onclick="document.getElementById('preview').style.display='none'" style="padding:3px 8px">X</button></div><div id="pContent"></div><button class="btn btn-green" style="width:100%;margin-top:6px" onclick="downloadCurrent()">📄 ডাউনলোড</button></div>
+<div id="preview" class="preview"><div style="display:flex;justify-content:space-between"><b id="pTitle"></b><button onclick="document.getElementById('preview').style.display='none'" style="padding:2px 6px">X</button></div><div id="pContent"></div><button class="btn btn-green" style="width:100%;margin-top:4px" onclick="downloadCurrent()">📄 ডাউনলোড</button></div>
 <div class="grid" id="list"></div>
 <div style="position:absolute;left:-9999px;top:0"><div id="pdfCapture"></div></div>
-<div style="margin-top:5px;padding:3px;border:1px solid #0a5c36;border-radius:8px;background:#111a12">
+<div style="margin-top:4px;padding:3px;border:1px solid #0a5c36;border-radius:6px;background:#111a12">
 <div style="display:flex;gap:3px">
-<div style="flex:1;background:#1e4d2b;border-radius:5px;padding:3px;text-align:center"><small style="font-size:7px">আয়</small><br><b id="totalIncome" style="font-size:10px">৳0</b></div>
-<div style="flex:1;background:#4d2b1e;border-radius:5px;padding:3px;text-align:center"><small style="font-size:7px">খরচ</small><br><b id="totalExpense" style="font-size:10px">৳0</b></div>
-<div style="flex:1;background:#1e4d2b;border-radius:5px;padding:3px;text-align:center"><small style="font-size:7px">লাভ</small><br><b id="totalProfit" style="font-size:10px;color:#7ed957">৳0</b></div>
+<div style="flex:1;background:#1e4d2b;border-radius:4px;padding:2px;text-align:center"><small style="font-size:7px">মাসের আয়</small><br><b id="totalIncome" style="font-size:10px">৳0</b></div>
+<div style="flex:1;background:#4d2b1e;border-radius:4px;padding:2px;text-align:center"><small style="font-size:7px">খরচ</small><br><b id="totalExpense" style="font-size:10px">৳0</b></div>
+<div style="flex:1;background:#1e4d2b;border-radius:4px;padding:2px;text-align:center"><small style="font-size:7px">লাভ</small><br><b id="totalProfit" style="font-size:10px;color:#7ed957">৳0</b></div>
 </div>
-<button onclick="downloadSummaryPDF()" style="width:100%;margin-top:3px;padding:4px;background:#fff;color:#000;border-radius:4px;font-size:8px;font-weight:bold;border:0">PDF</button>
-<div style="margin-top:3px;background:#0f2a18;border:1px solid #7ed957;border-radius:5px;padding:3px 6px;display:flex;justify-content:space-between"><small style="font-size:8px">মোট লাভ</small><b id="lifetimeProfit" style="font-size:11px;color:#7ed957">৳0</b></div>
-<small id="lifetimeDetails" style="display:none"></small>
+<button onclick="downloadSummaryPDF()" style="width:100%;margin-top:3px;padding:3px;background:#fff;color:#000;border-radius:4px;font-size:8px;font-weight:bold;border:0">📄 মাসিক আয়-ব্যয়-লাভ PDF</button>
+<div style="margin-top:3px;background:#0f2a18;border:1px solid #7ed957;border-radius:4px;padding:3px 7px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:8px">মোট লাভ</span><b id="lifetimeProfit" style="font-size:11px;color:#7ed957">৳0</b></div>
 </div>
 <script>
 let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
