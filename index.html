@@ -41,25 +41,73 @@ table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px}th,td{bo
 <div id="preview" class="preview"><div style="display:flex;justify-content:space-between"><b id="pTitle"></b><button onclick="document.getElementById('preview').style.display='none'" style="padding:3px 8px">X</button></div><div id="pContent"></div><button class="btn btn-green" style="width:100%;margin-top:6px" onclick="downloadCurrent()">📄 ডাউনলোড</button></div>
 <div class="grid" id="list"></div>
 <div style="position:absolute;left:-9999px;top:0"><div id="pdfCapture"></div></div>
+
+<!-- ===== নতুন এড করা - নিচের ৪টা ঘর ===== -->
+<div class="box" style="margin-top:8px;border:2px solid #0a5c36;background:#131f16">
+  <div style="display:flex;gap:6px">
+    <div style="flex:1;background:#1e4d2b;border:1px solid #2a6b3d;border-radius:10px;padding:10px;text-align:center"><small style="font-size:10px">মাসের আয়</small><br><b id="totalIncome" style="font-size:15px">৳0</b></div>
+    <div style="flex:1;background:#4d2b1e;border:1px solid #6b3d2a;border-radius:10px;padding:10px;text-align:center"><small style="font-size:10px">খরচ</small><br><b id="totalExpense" style="font-size:15px">৳0</b></div>
+    <div style="flex:1;background:#1e4d2b;border:1px solid #2a6b3d;border-radius:10px;padding:10px;text-align:center"><small style="font-size:10px">লাভ</small><br><b id="totalProfit" style="font-size:15px;color:#7ed957">৳0</b></div>
+  </div>
+  <button onclick="downloadSummaryPDF()" style="width:100%;margin-top:8px;padding:12px;background:#fff;color:#000;border-radius:10px;font-weight:900;border:0;font-size:13px">📄 মাসিক আয়-ব্যয়-লাভ PDF</button>
+  <div style="margin-top:10px;background:linear-gradient(90deg,#0f3d1f,#1a5c30);border:2px solid #7ed957;border-radius:12px;padding:14px;text-align:center">
+    <small style="color:#a0d995;font-size:11px">💰 মোট লাভ (অটো ব্যবসা শুরু থেকে আজ পর্যন্ত)</small><br>
+    <b id="lifetimeProfit" style="font-size:28px;color:#7ed957">৳0</b><br>
+    <small id="lifetimeDetails" style="font-size:10px;opacity:.7">মোট আয় ৳0 | মোট খরচ ৳0</small>
+  </div>
+</div>
+
 <script>
 let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
 let names=["রাকিব","আলম","সজিব","নাসির","করিম","সুমন","রিপন","আনোয়ার","জামাল","রফিক"];
 let drivers=JSON.parse(localStorage.getItem('dFinal')||'null')||autos.map((a,i)=>({name:names[i],phone:"",address:"",photo:""}));
 let tx=JSON.parse(localStorage.getItem('tFinal')||'{}');let lastType='';
-function save(){localStorage.setItem('dFinal',JSON.stringify(drivers));localStorage.setItem('tFinal',JSON.stringify(tx));}
+function save(){localStorage.setItem('dFinal',JSON.stringify(drivers));localStorage.setItem('tFinal',JSON.stringify(tx));updateSummary();}
 function render(){let h='';autos.forEach((auto,i)=>{let d=drivers[i];let list=tx[auto]||[];h+=`<div class="auto" id="a${i}"><div class="head" onclick="document.getElementById('a${i}').classList.toggle('open')"><img src="${d.photo||'https://via.placeholder.com/100?text=No'}"><div style="flex:1"><b>${auto} ${d.name}</b><br><small>📱${d.phone||'নাই'} | ${list.length}</small></div>▼</div><div class="body"><input id="n${i}" value="${d.name}" placeholder="নাম"><input id="p${i}" value="${d.phone}" placeholder="ফোন"><input type="file" accept="image/*" onchange="photo(${i},this)"><button class="btn btn-dark" style="width:100%" onclick="saveD(${i})">💾</button><input type="date" id="dt${i}" value="${document.getElementById('oneDate').value}"><div class="row"><input type="number" id="in${i}" placeholder="আয়"><input type="number" id="ex${i}" placeholder="খরচ"></div><button class="btn btn-green" style="width:100%" onclick="addT(${i})">➕</button><table><tr><th>তারিখ</th><th>আয়</th><th>খ</th></tr>${list.slice(-4).reverse().map(r=>`<tr><td>${r.date.slice(5)}</td><td>${r.income}</td><td>${r.expense}</td></tr>`).join('')}</table></div></div>`;});document.getElementById('list').innerHTML=h;}
+function updateSummary(){
+  let m=document.getElementById('monthDate').value||new Date().toISOString().slice(0,7);
+  let monthI=0,monthE=0,allI=0,allE=0;
+  autos.forEach(a=>{
+    (tx[a]||[]).forEach(x=>{
+      allI+=x.income||0; allE+=x.expense||0;
+      if((x.date||'').startsWith(m)){monthI+=x.income||0; monthE+=x.expense||0;}
+    });
+  });
+  document.getElementById('totalIncome').innerText='৳'+monthI;
+  document.getElementById('totalExpense').innerText='৳'+monthE;
+  document.getElementById('totalProfit').innerText='৳'+(monthI-monthE);
+  document.getElementById('lifetimeProfit').innerText='৳'+(allI-allE);
+  document.getElementById('lifetimeDetails').innerText=`মোট আয় ৳${allI} | মোট খরচ ৳${allE}`;
+}
 function saveD(i){drivers[i].name=document.getElementById('n'+i).value;drivers[i].phone=document.getElementById('p'+i).value;save();render();}
 function photo(i,inp){let r=new FileReader();r.onload=e=>{drivers[i].photo=e.target.result;save();render();};r.readAsDataURL(inp.files[0]);}
 function addT(i){let d=document.getElementById('dt'+i).value;let inc=parseInt(document.getElementById('in'+i).value||0);let ex=parseInt(document.getElementById('ex'+i).value||0);if(!tx[autos[i]])tx[autos[i]]=[];let idx=tx[autos[i]].findIndex(x=>x.date===d);if(idx>=0)tx[autos[i]][idx]={date:d,income:inc,expense:ex};else tx[autos[i]].push({date:d,income:inc,expense:ex});tx[autos[i]].sort((a,b)=>a.date.localeCompare(b.date));save();render();}
 function makeTableForDate(date){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:600px"><h3>দৈনিক হিসাব - ${date}</h3></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let ti=0,te=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date===date);let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);ti+=a;te+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><div style="background:#0a5c36;color:#fff;padding:8px;text-align:center"><b>আয় ${ti} | খরচ ${te} | লাভ ${ti-te}</b></div>`;return html;}
 function makeTableForMonth(month){let html=`<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:600px"><h3>মাসিক ১-৩১ - ${month}</h3></div><table><tr><th>গাড়ি</th><th>ড্রাইভার</th><th>আয়</th><th>খরচ</th><th>লাভ</th></tr>`;let gI=0,gE=0;autos.forEach((auto,i)=>{let d=(tx[auto]||[]).filter(x=>x.date.startsWith(month));let a=d.reduce((s,x)=>s+x.income,0);let e=d.reduce((s,x)=>s+x.expense,0);gI+=a;gE+=e;html+=`<tr><td>${auto}</td><td>${drivers[i].name}</td><td>${a}</td><td>${e}</td><td>${a-e}</td></tr>`;});html+=`</table><div style="background:#0a5c36;color:#fff;padding:8px;text-align:center"><b>আয় ${gI} | খরচ ${gE} | লাভ ${gI-gE}</b></div>`;return html;}
+function makeSummaryTable(){
+  let m=document.getElementById('monthDate').value||new Date().toISOString().slice(0,7);
+  let monthI=0,monthE=0,allI=0,allE=0;
+  autos.forEach(a=>{(tx[a]||[]).forEach(x=>{allI+=x.income||0;allE+=x.expense||0;if((x.date||'').startsWith(m)){monthI+=x.income||0;monthE+=x.expense||0;}})});
+  return `<div style="text-align:center"><img src="IMG-20261027-WA0084(2).jpg" style="width:100%;max-width:600px"><h2>মাসিক আয়-ব্যয়-লাভ - ${m}</h2></div>
+  <table style="margin-top:10px"><tr><th>বিবরণ</th><th>টাকা</th></tr>
+  <tr><td>মাসের মোট আয়</td><td>৳${monthI}</td></tr>
+  <tr><td>মাসের মোট খরচ</td><td>৳${monthE}</td></tr>
+  <tr><td><b>মাসের লাভ</b></td><td><b>৳${monthI-monthE}</b></td></tr>
+  </table>
+  <div style="margin-top:15px;background:#0a5c36;color:#fff;padding:10px;text-align:center;border-radius:8px">
+  <h3>💰 মোট লাভ (শুরু থেকে) ৳${allI-allE}</h3>
+  <small>মোট আয় ৳${allI} | মোট খরচ ৳${allE}</small>
+  </div>`;
+}
 function previewOne(){let d=document.getElementById('oneDate').value;let html=makeTableForDate(d);document.getElementById('pTitle').innerText=d;document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='one';}
 function previewMonth(){let m=document.getElementById('monthDate').value;let html=makeTableForMonth(m);document.getElementById('pTitle').innerText=m;document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='month';}
-function downloadCurrent(){if(lastType==='one')downloadOne();else downloadMonth();}
+function downloadCurrent(){if(lastType==='one')downloadOne();else if(lastType==='summary')downloadSummaryPDF();else downloadMonth();}
 async function generatePdfFromHtml(htmlContent,fileName){let cap=document.getElementById('pdfCapture');cap.innerHTML=htmlContent;await new Promise(r=>setTimeout(r,400));let canvas=await html2canvas(cap,{scale:2,useCORS:true,backgroundColor:'#fff'});let imgData=canvas.toDataURL('image/png');let {jsPDF}=window.jspdf;let doc=new jsPDF('p','mm','a4');let w=190;let h=canvas.height*w/canvas.width;let left=h;let pos=10;doc.addImage(imgData,'PNG',10,pos,w,h);left-=297;while(left>=0){pos=left-h+10;doc.addPage();doc.addImage(imgData,'PNG',10,pos,w,h);left-=297;}doc.save(fileName);}
 async function downloadOne(){let date=document.getElementById('oneDate').value;let html=makeTableForDate(date);await generatePdfFromHtml(html,`takrim-${date}.pdf`);}
 async function downloadMonth(){let month=document.getElementById('monthDate').value;let html=makeTableForMonth(month);await generatePdfFromHtml(html,`takrim-monthly-${month}.pdf`);}
-render();
+async function downloadSummaryPDF(){let month=document.getElementById('monthDate').value||new Date().toISOString().slice(0,7);let html=makeSummaryTable();document.getElementById('pTitle').innerText='মাসিক আয়-ব্যয়-লাভ';document.getElementById('pContent').innerHTML=html;document.getElementById('preview').style.display='block';lastType='summary';await generatePdfFromHtml(html,`takrim-summary-${month}.pdf`);}
+document.getElementById('monthDate').addEventListener('change',updateSummary);
+render();updateSummary();
 </script>
 </body>
 </html>
