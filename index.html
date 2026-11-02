@@ -21,7 +21,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{b
 .title-bar{text-align:center;background:#1a3320;border-radius:8px;padding:6px;margin-bottom:6px;border:1px solid #0a5c36}.title-bar h3{font-size:14px;color:#7ed957}
 .del-icon { color: #ff4d4d; cursor: pointer; font-weight: bold; text-align: center; width: 30px; }
 
-/* ব্যাকআপ বাটনের নতুন স্টাইল */
+/* ব্যাকআপ বাটনের স্টাইল */
 .backup-section { margin-top: 10px; padding: 8px; border: 1px dashed #7ed957; border-radius: 10px; background: #162219; display: flex; gap: 8px; }
 .btn-backup { padding: 10px; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1; font-size: 12px; }
 .btn-export { background-color: #0288d1; }
@@ -52,7 +52,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{b
 </div>
 </div>
 
-<!-- নতুন যুক্ত হওয়া সেফটি ব্যাকআপ সেকশন -->
+<!-- সেফটি ব্যাকআপ সেকশন -->
 <div class="backup-section">
     <button class="btn-backup btn-export" onclick="exportData()">📥 ডেটা ব্যাকআপ (ডাউনলোড)</button>
     <button class="btn-backup btn-import" onclick="document.getElementById('importFile').click()">📤 ডেটা রিস্টোর (আপলোড)</button>
@@ -60,7 +60,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{b
 </div>
 
 <script>
-// ১ থেকে ১০ পর্যন্ত ফ্রেশ বাংলা সিরিয়াল এবং নাম সেট করা হলো
+// ১ থেকে ১০ পর্যন্ত সম্পূর্ণ ফ্রেশ বাংলা সিরিয়াল
 let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
 let names=["রাকিব","আলম","সজিব","নাসির","করিম","সুমন","রিপন","আনোয়ার","জামাল","রফিক"];
 let drivers=JSON.parse(localStorage.getItem('dFinal')||'null')||autos.map((a,i)=>({name:names[i],phone:"",photo:""}));
@@ -91,7 +91,7 @@ function render(){
 }
 
 function photo(i,el){
-    let f=el.files[0];if(!f)return;
+    let f=el.files;if(!f)return;
     let r=new FileReader();r.onload=function(e){drivers[i].photo=e.target.result;save();render();};r.readAsDataURL(f);
 }
 
@@ -133,4 +133,3 @@ function updateSummary(){
 function exportData(){
     let data={drivers:drivers,tx:tx};
     let s=JSON.stringify(data);let b=new Blob([s],{type:"application/json"});
-    let a=document.createElement('a');a.href=URL.createObjectURL(b);
