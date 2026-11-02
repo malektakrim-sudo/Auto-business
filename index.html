@@ -60,8 +60,9 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{b
 </div>
 
 <script>
-let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০自动","অটো-০৯","অটো-১০"];
-let names=["রাকিব","আলম","সজিব","নাসির","করিম","সুمن","রিপন","আনোয়ার","জামাল","রফিক"];
+// ১ থেকে ১০ পর্যন্ত ফ্রেশ বাংলা সিরিয়াল এবং নাম সেট করা হলো
+let autos=["অটো-০১","অটো-০২","অটো-০৩","অটো-০৪","অটো-০৫","অটো-০৬","অটো-০৭","অটো-০৮","অটো-০৯","অটো-১০"];
+let names=["রাকিব","আলম","সজিব","নাসির","করিম","সুমন","রিপন","আনোয়ার","জামাল","রফিক"];
 let drivers=JSON.parse(localStorage.getItem('dFinal')||'null')||autos.map((a,i)=>({name:names[i],phone:"",photo:""}));
 let tx=JSON.parse(localStorage.getItem('tFinal')||'{}');let lastType='';
 
@@ -78,8 +79,8 @@ function render(){
             let actualIndex = list.indexOf(r); 
             return `<tr>
                 <td>${r.date.slice(5)}</td>
-                <td>${r.income}</td>
-                <td>${r.expense}</td>
+                <td>${r.income}৳</td>
+                <td>${r.expense}৳</td>
                 <td class="del-icon" onclick="deleteSingleRow('${auto}', ${actualIndex})">❌</td>
             </tr>`;
         }).join('');
@@ -89,47 +90,47 @@ function render(){
     document.getElementById('list').innerHTML=h;
 }
 
-function deleteSingleRow(autoKey, index) {
-    if(confirm("আপনি কি নিশ্চিতভাবে এই দিনের হিসাবটি মুছে ফেলতে চান?")) {
-        if(tx[autoKey]) {
-            tx[autoKey].splice(index, 1);
-            save();
-            render();
-        }
+function photo(i,el){
+    let f=el.files[0];if(!f)return;
+    let r=new FileReader();r.onload=function(e){drivers[i].photo=e.target.result;save();render();};r.readAsDataURL(f);
+}
+
+function saveD(i){
+    drivers[i].name=document.getElementById('n'+i).value;
+    drivers[i].phone=document.getElementById('p'+i).value;
+    save();render();alert('ড্রাইভার তথ্য সফলভাবে সেভ হয়েছে!');
+}
+
+function addT(i){
+    let auto=autos[i];let d=document.getElementById('dt'+i).value;
+    let inc=parseInt(document.getElementById('in'+i).value)||0;
+    let exp=parseInt(document.getElementById('ex'+i).value)||0;
+    if(!tx[auto])tx[auto]=[];
+    tx[auto].push({date:d,income:inc,expense:exp});
+    document.getElementById('in'+i).value='';
+    document.getElementById('ex'+i).value='';
+    save();render();
+}
+
+function deleteSingleRow(auto,idx){
+    if(confirm('আপনি কি নিশ্চিত যে এই হিসাবটি মুছে ফেলতে চান?')){
+        tx[auto].splice(idx,1);save();render();
     }
 }
 
-// আপনার পূর্বের ফাংশনগুলোর ব্যাকআপ সুরক্ষার জন্য নিচে অবিকল রাখা হলো
-function saveD(i){
-    drivers[i].name = document.getElementById('n'+i).value;
-    drivers[i].phone = document.getElementById('p'+i).value;
-    save(); render(); alert('ড্রাইভার তথ্য সেভ হয়েছে!');
-}
-function photo(i, el){
-    let r = new FileReader();
-    r.onload = function(){ drivers[i].photo = r.result; save(); render(); };
-    if(el.files[0]) r.readAsDataURL(el.files[0]);
-}
-function addT(i){
-    let auto = autos[i];
-    let inc = parseInt(document.getElementById('in'+i).value)||0;
-    let exp = parseInt(document.getElementById('ex'+i).value)||0;
-    let dt = document.getElementById('dt'+i).value;
-    if(!tx[auto]) tx[auto] = [];
-    tx[auto].push({date:dt, income:inc, expense:exp});
-    document.getElementById('in'+i).value='';
-    document.getElementById('ex'+i).value='';
-    save(); render(); alert('হিসাব যোগ হয়েছে!');
+function updateSummary(){
+    let ti=0,te=0;
+    autos.forEach(auto=>{
+        let list=tx[auto]||[];
+        list.forEach(x=>{ti+=x.income;te+=x.expense;});
+    });
+    document.getElementById('totalIncome').innerText='৳'+ti;
+    document.getElementById('totalExpense').innerText='৳'+te;
+    document.getElementById('totalProfit').innerText='৳'+(ti-te);
+    document.getElementById('lifetimeProfit').innerText='৳'+(ti-te);
 }
 
-function updateSummary(){
-    let m = document.getElementById('monthDate').value || new Date().toISOString().slice(0,7);
-    let mInc=0, mExp=0, lProf=0;
-    autos.forEach(a=>{
-        (tx[a]||[]).forEach(x=>{
-            if(x.date.startsWith(m)){ mInc+=x.income||0; mExp+=x.expense||0; }
-            lProf+=(x.income||0)-(x.expense||0);
-        });
-    });
-    document.getElementById('totalIncome').innerText = '৳'+mInc;
-    document.getElementById('totalExpense').innerText = '৳'+mExp;
+function exportData(){
+    let data={drivers:drivers,tx:tx};
+    let s=JSON.stringify(data);let b=new Blob([s],{type:"application/json"});
+    let a=document.createElement('a');a.href=URL.createObjectURL(b);
